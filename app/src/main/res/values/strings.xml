@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Activity Monitoring Tools</string>
+    <string name="action_settings">User Information</string>
+    <string name="title_activity_user_preferences">UserPreferencesActivity</string>
+    <string name="save_data">Save your data</string>
+
+
+</resources>
