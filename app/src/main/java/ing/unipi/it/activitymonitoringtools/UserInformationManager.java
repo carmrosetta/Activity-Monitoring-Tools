@@ -61,9 +61,10 @@ public class UserInformationManager {
     }
 
     /**
-     * @return true if the user has provided his/her information, false otherwise
      * @brief Method that checks if the user has provided information about his/her gender, age,
-     * height and weight
+     *        height and weight
+     * @return true if the user has provided his/her information, false otherwise
+     *
      */
 
     public boolean userInformationSaved() {
@@ -84,8 +85,9 @@ public class UserInformationManager {
     }
 
     /**
-     * @return userInfo HashMap<String, String> that contains user information in key-value pairs
      * @brief Method that gets user information
+     * @return userInfo HashMap<String, String> that contains user information in key-value pairs
+     *
      */
     public HashMap<String, String> getUserInformation() {
 

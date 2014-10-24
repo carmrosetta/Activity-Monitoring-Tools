@@ -52,7 +52,6 @@ public class UserInformationActivity extends Activity {
 
 
         if(userInformationManager.userInformationSaved()) {
-            //Toast.makeText(getApplicationContext(),"user logged in "+ userInformationManager.userInformationSaved(), Toast.LENGTH_LONG).show();
             header.setText("Update or clear your information");
             HashMap<String, String> user = userInformationManager.getUserInformation();
 
@@ -72,10 +71,7 @@ public class UserInformationActivity extends Activity {
 
         }
         else {
-            //Toast.makeText(getApplicationContext(),"user logged in "+ userInformationManager.userInformationSaved(), Toast.LENGTH_LONG).show();
-
-            saveUserInfoBtn.setVisibility(View.VISIBLE);
-
+           saveUserInfoBtn.setVisibility(View.VISIBLE);
         }
 
         saveUserInfoBtn.setOnClickListener(new View.OnClickListener() {
@@ -85,10 +81,12 @@ public class UserInformationActivity extends Activity {
             }
         });
 
-
-
     }
 
+
+    /**
+     * @brief Method which initializes the graphical user interface
+     */
     public void initGui() {
 
         header = (TextView) findViewById(R.id.header_startup_activity);
@@ -102,7 +100,7 @@ public class UserInformationActivity extends Activity {
     }
 
     /**
-     * Function that checks if user's information have been provided
+     * @brief Method that checks if user information have been provided
      * @return true if all fields are provided, false otherwise
      */
 
@@ -142,18 +140,14 @@ public class UserInformationActivity extends Activity {
     }
 
     /**
-     * save user preferences
+     * @brief Method that saves user information and starts the main activity of the application
      */
     public void saveUserData() {
-
         if(userDataInserted()) {
             userInformationManager.saveUserInformation(sex, age, height, weight);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
-
     }
-
-
 }
