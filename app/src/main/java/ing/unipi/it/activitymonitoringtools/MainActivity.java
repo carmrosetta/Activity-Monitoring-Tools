@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     ArrayList<Tool> mTools;
 
-    MyListAdapter<Tool> mAdapter;
+    MyCustomAdapter<Tool> mAdapter;
 
 
     @Override
@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mTools.add(new Tool("Impact Detection"));
 
 
-        mAdapter = new MyListAdapter<Tool>(this, mTools);
+        mAdapter = new MyCustomAdapter<Tool>(this, mTools);
 
         mListView.setAdapter(mAdapter);
 
@@ -118,8 +118,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //todo fare partire il servizio che si occupa di inserire i campioni dell'accelerometro in un buffer circolare
 
            /* Intent intent = new Intent(getApplicationContext(), AccelerationSamplingService.class);
-            startService(intent);
-            finish();*/
+            startService(intent);*/
+            finish();
 
 
         }
