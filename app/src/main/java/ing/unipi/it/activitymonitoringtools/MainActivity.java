@@ -118,8 +118,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //todo fare partire il servizio che si occupa di inserire i campioni dell'accelerometro in un buffer circolare
 
            /* Intent intent = new Intent(getApplicationContext(), AccelerationSamplingService.class);
-            startService(intent);*/
-            finish();
+            startService(intent);
+            finish();*/
 
 
         }

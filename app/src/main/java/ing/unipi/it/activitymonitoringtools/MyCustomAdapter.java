@@ -19,7 +19,7 @@ import android.widget.ToggleButton;
 
 /**
  * @brief Class that extends the Android BaseAdapter class and displays data in a ListView
- * @param <T> Class to which belong the object displayed in the ListView
+ * @param <T> Class to which belong the objects displayed in the ListView
  */
 
 public class MyCustomAdapter<T> extends BaseAdapter{
@@ -28,14 +28,25 @@ public class MyCustomAdapter<T> extends BaseAdapter{
     ArrayList<T> mList;
     SparseBooleanArray mSparseBooleanArray;
 
+
+    /**
+     * @brief Constructor
+     * @param context the application context
+     * @param list List containing the objects of which we want to display data and interact with
+     */
     public MyCustomAdapter(Context context, ArrayList<T> list) {
-// TODO Auto-generated constructor stub
+
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext);
         mSparseBooleanArray = new SparseBooleanArray();
         mList = new ArrayList<T>();
         this.mList = list;
     }
+
+    /**
+     * @brief Method that gets the selected items of the list
+     * @return ArrayList containing the selected objects of the list
+     */
     public ArrayList<T> getCheckedItems() {
         ArrayList<T> mTempArry = new ArrayList<T>();
         for(int i=0;i<mList.size();i++) {
@@ -47,27 +58,25 @@ public class MyCustomAdapter<T> extends BaseAdapter{
     }
     @Override
     public int getCount() {
-// TODO Auto-generated method stub
         return mList.size();
     }
     @Override
     public Object getItem(int position) {
-// TODO Auto-generated method stub
         return mList.get(position);
     }
     @Override
     public long getItemId(int position) {
-// TODO Auto-generated method stub
         return position;
     }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-// TODO Auto-generated method stub
+
         if(convertView == null) {
             convertView = mInflater.inflate(R.layout.list_item_with_toggle, null);
         }
         ImageView icon = (ImageView)convertView.findViewById(R.id.toolIcon);
-        //todo check if it is correct
+
 
         switch (position){
 
@@ -117,10 +126,11 @@ public class MyCustomAdapter<T> extends BaseAdapter{
         });
         return convertView;
     }
+
+    
     OnCheckedChangeListener mCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-// TODO Auto-generated method stub
             mSparseBooleanArray.put((Integer) buttonView.getTag(), isChecked);
         }
     };
