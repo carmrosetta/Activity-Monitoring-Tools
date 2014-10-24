@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * @file MainActivity.java
+ * @brief Activity through which the user chooses which modules to activate
+ */
 
 public class MainActivity extends Activity {
 

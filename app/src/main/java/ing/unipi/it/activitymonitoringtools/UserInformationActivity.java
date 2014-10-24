@@ -65,7 +65,7 @@ public class UserInformationActivity extends Activity {
         }
         else {
             //Toast.makeText(getApplicationContext(),"user logged in "+ userInformationManager.userInformationSaved(), Toast.LENGTH_LONG).show();
-            
+
             saveUserInfoBtn.setVisibility(View.VISIBLE);
 
         }
@@ -98,7 +98,7 @@ public class UserInformationActivity extends Activity {
      * @return true if all fields are provided, false otherwise
      */
 
-    public boolean userDataInserted() {
+    protected boolean userDataInserted() {
 
         String[] genderValues = getResources().getStringArray(R.array.gender_values);
         sex = genderValues[userSex.getSelectedItemPosition()];
@@ -147,22 +147,5 @@ public class UserInformationActivity extends Activity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_preferences, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
