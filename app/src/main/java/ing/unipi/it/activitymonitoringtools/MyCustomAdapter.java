@@ -22,13 +22,13 @@ import android.widget.ToggleButton;
  * @param <T> Class to which belong the object displayed in the ListView
  */
 
-public class MyListAdapter<T> extends BaseAdapter{
+public class MyCustomAdapter<T> extends BaseAdapter{
     Context mContext;
     LayoutInflater mInflater;
     ArrayList<T> mList;
     SparseBooleanArray mSparseBooleanArray;
 
-    public MyListAdapter(Context context, ArrayList<T> list) {
+    public MyCustomAdapter(Context context, ArrayList<T> list) {
 // TODO Auto-generated constructor stub
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext);
