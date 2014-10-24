@@ -7,27 +7,32 @@ import android.content.SharedPreferences;
 import java.util.HashMap;
 
 /**
- * Created by carmen on 11/10/14.
+ * @file UserInformationManager.java
+ * @brief Java class that helps in managing user information about his/her gender, age, height and
+ * weight.
+ * This class is used to save user information in key-value pairs.
+ * This information is saved persistently in a xml file, that is it will persist across user
+ * sessions, even if the application is killed.
+ * This class is also used to retrieve, update and delete user information.
  */
-public class UserInformationManager {
 
-    private final static String PREF_NAME = "UserPreferences";
+public class UserInformationManager {
 
     public final static String USER_SEX = "userSex";
     public final static String USER_AGE = "userAge";
     public final static String USER_HEIGHT = "userHeight";
     public final static String USER_WEIGHT = "userWeight";
-
     public final static String USER_INFO_SAVED = "userInfoProvided";
-
-
+    private final static String PREF_NAME = "UserInformation";
     SharedPreferences userInformation;
     SharedPreferences.Editor editor;
     Context _context;
 
     /**
      * Constructor
-     * @param context
+     *
+     * @param[in] context   Global information about the application environment.
+     * It allows access to application-specific resources and classes
      */
 
     public UserInformationManager(Context context) {
@@ -37,11 +42,11 @@ public class UserInformationManager {
     }
 
     /**
-     * Save user preferences
-     * @param userSex
-     * @param userAge
-     * @param userHeight
-     * @param userWeight
+     * @brief This method saves user information in a xml file in key-value pairs
+     * @param[in] userSex       String that specifies user gender
+     * @param[in] userAge       String that specifies user age
+     * @param[in] userHeight    String that specifies user height in centimeters
+     * @param[in] userWeight    String that specifies user weight in kilograms
      */
     public void saveUserInformation(String userSex, String userAge, String userHeight, String userWeight) {
 
@@ -56,8 +61,9 @@ public class UserInformationManager {
     }
 
     /**
-     * Check if the user has provided his information
-     * @return true if the user has provided his information
+     * @return true if the user has provided his/her information, false otherwise
+     * @brief Method that checks if the user has provided information about his/her gender, age,
+     * height and weight
      */
 
     public boolean userInformationSaved() {
@@ -65,10 +71,10 @@ public class UserInformationManager {
     }
 
     /**
-     * Start UserInformationActivity to let the user provide his information
+     * @brief Method that starts UserInformationActivity to let the user provide his/her information
      */
     public void checkUserInformationSaved() {
-        if(!this.userInformationSaved()) {
+        if (!this.userInformationSaved()) {
             Intent intent = new Intent(_context, UserInformationActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -78,8 +84,8 @@ public class UserInformationManager {
     }
 
     /**
-     * Get user information
-     * @return userInfo
+     * @return userInfo HashMap<String, String> that contains user information in key-value pairs
+     * @brief Method that gets user information
      */
     public HashMap<String, String> getUserInformation() {
 
@@ -95,9 +101,9 @@ public class UserInformationManager {
     }
 
     /**
-     * Clear user information
+     * @brief Method that clears user information
      */
-    public void clearUserInformation(){
+    public void clearUserInformation() {
 
         editor.clear();
         editor.commit();
@@ -108,9 +114,6 @@ public class UserInformationManager {
         _context.startActivity(intent);
 
     }
-
-
-
 
 
 }

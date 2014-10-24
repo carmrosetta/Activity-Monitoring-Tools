@@ -14,6 +14,12 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
+/**
+ * @file  UserInformationActivity.java
+ * @brief Android class that helps in managing user information.
+ *
+ */
+
 public class UserInformationActivity extends Activity {
 
     UserInformationManager userInformationManager;
@@ -37,6 +43,8 @@ public class UserInformationActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_information);
+        setTitle(R.string.app_name);
+
 
         userInformationManager = new UserInformationManager(getApplicationContext());
 
