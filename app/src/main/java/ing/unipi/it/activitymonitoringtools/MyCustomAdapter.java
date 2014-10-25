@@ -2,6 +2,8 @@ package ing.unipi.it.activitymonitoringtools;
 
 
 import java.util.ArrayList;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.SparseBooleanArray;
@@ -112,7 +114,7 @@ public class MyCustomAdapter<T> extends BaseAdapter {
                 switch (position) {
                     case 0:
                         Intent i = new Intent(mContext, SensorDataLogSettings.class);
-                        mContext.startActivity(i);
+                        ((Activity)mContext).startActivityForResult(i,MainActivity.SELECT_SENSORS);
                         break;
                     case 1:
                         break;

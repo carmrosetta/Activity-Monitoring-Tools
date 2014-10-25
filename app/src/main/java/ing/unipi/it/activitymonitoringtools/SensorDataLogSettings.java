@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import ing.unipi.it.activitymonitoringtools.R;
@@ -32,6 +34,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * @brief This class allows to select the position of the smartphone and to choose which sensors to use and at which speed
  */
 public class SensorDataLogSettings extends Activity {
+
+    public final static int SENSORS_SELECTED = 1;
 
     private Spinner smartPhonePositionSpinner;
 
@@ -83,29 +87,63 @@ public class SensorDataLogSettings extends Activity {
         });
     }
 
+    /**
+     * @brief Method that runs when the user press the button
+     * It checks if the user has chosen at least a sensor. If it hasn't chosen any sensor, it shows
+     * a dialog which inform the user that he/she has to use at least a sensor.
+     * Otherwise, it returns the sensor position and the list of the chosen sensors to the main activity
+     */
     public void onSaveButtonPressed() {
         if(selectedSensors == 0) {
             //Toast.makeText(getApplicationContext(), "You must select at least a sensor", Toast.LENGTH_SHORT).show();
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-            alertBuilder.setMessage("You must select at least a sensor!");
-            alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-
-            alertBuilder.show();
+           showAlertDialog();
 
         }
         else {
-            Toast.makeText(getApplicationContext(), "You have chosen "+selectedSensors+" sensors", Toast.LENGTH_SHORT).show();
-
+            //Toast.makeText(getApplicationContext(), "You have chosen "+selectedSensors+" sensors", Toast.LENGTH_SHORT).show();
+            sendData();
         }
     }
 
+    /**
+     * @brief Method that sends information about the smartphone position and the selected sensors
+     * to the main activity
+     */
+    public void sendData() {
 
+        selectedSensorsList = new LinkedList<SensorInfo>();
 
+        for(int k = 0; k < sensorList.size(); k++) {
+            if(sensors[k].isChecked()) {
+                SensorInfo sensorInfo = new SensorInfo(sensorList.get(k).getType(), sensorList.get(k).getName(), sensorDelays[k], sensorList.get(k).getMaximumRange());
+                selectedSensorsList.add(sensorInfo);
+            }
+        }
+
+        Intent data = new Intent();
+        data.putExtra("Smartphone position", smartPhonePosition);
+        data.putExtra("Selected sensors", (java.io.Serializable)selectedSensorsList);
+
+        setResult(SENSORS_SELECTED, data);
+        finish();
+
+    }
+
+    /**
+     * @brief Method that shows a dialog which tells the user he/she has to select at least a sensor
+     */
+    public void showAlertDialog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setMessage("You must select at least a sensor!");
+        alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertBuilder.show();
+    }
 
 
     /**

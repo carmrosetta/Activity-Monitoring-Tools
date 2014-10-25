@@ -1,9 +1,7 @@
 package ing.unipi.it.activitymonitoringtools;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @file MainActivity.java
@@ -22,16 +21,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    ListView mListView;
+    public final static int SELECT_SENSORS = 1;
 
-    Button btnShowCheckedItems;
+    private ListView mListView;
+
+    private Button btnShowCheckedItems;
 
 
-    ArrayList<Tool> mTools;
+    private ArrayList<Tool> mTools;
 
-    MyCustomAdapter<Tool> mAdapter;
+    private MyCustomAdapter<Tool> mAdapter;
 
-    UserInformationManager userInformationManager;
+    private UserInformationManager userInformationManager;
+
+    private String smartPhonePosition;
+
+    private List<SensorInfo> selectedSensorsList;
 
 
     @Override
@@ -115,4 +120,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SELECT_SENSORS) {
+            if(resultCode == SensorDataLogSettings.SENSORS_SELECTED) {
+                 smartPhonePosition= data.getStringExtra("Smartphone position");
+                //Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
+                selectedSensorsList = (List<SensorInfo>) data.getSerializableExtra("Selected sensors");
+            }
+
+        }
+    }
 }
