@@ -24,7 +24,13 @@ import java.util.Calendar;
 
 public class Utilities {
 
-
+    /**
+     * @brief Method that shows a notification as a persistent icon in the status bar
+     * @param context the application context
+     * @param notificationManager object that notifies the user that an event happened
+     * @param message a String representing the message for the user
+     * @param cls class to which belongs the activity that the user can start by clicking on the notification
+     */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void showNotification(Context context, NotificationManager notificationManager, String message, Class cls) {
         Notification.Builder builder = new Notification.Builder(context);
