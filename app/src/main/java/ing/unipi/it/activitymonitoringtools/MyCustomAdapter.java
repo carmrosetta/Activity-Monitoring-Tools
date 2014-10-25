@@ -22,7 +22,7 @@ import android.widget.ToggleButton;
  * @param <T> Class to which belong the objects displayed in the ListView
  */
 
-public class MyCustomAdapter<T> extends BaseAdapter{
+public class MyCustomAdapter<T> extends BaseAdapter {
     Context mContext;
     LayoutInflater mInflater;
     ArrayList<T> mList;
@@ -127,7 +127,7 @@ public class MyCustomAdapter<T> extends BaseAdapter{
         return convertView;
     }
 
-    
+
     OnCheckedChangeListener mCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -21,10 +21,6 @@ import java.util.ArrayList;
  */
 
 public class MainActivity extends Activity implements View.OnClickListener {
-    //todo decidere come trattare queste info che per ora sono costanti ma successivamente non lo saranno ma devono essere scelte dall'utente
-    public final static String SMARTPHONE_POSITION  = "Left front trouser pocket";
-    public final static int SAMPLING_FREQUENCY = SensorManager.SENSOR_DELAY_FASTEST;
-
 
     ListView mListView;
 
@@ -35,6 +31,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     MyCustomAdapter<Tool> mAdapter;
 
+    UserInformationManager userInformationManager;
+
 
     @Override
 
@@ -43,87 +41,79 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        setTitle(R.string.app_name);
 
-
+        userInformationManager = new UserInformationManager(getApplicationContext());
+        userInformationManager.checkUserInformationSaved();
 
         bindComponents();
-
         init();
-
         addListeners();
 
     }
 
 
     private void bindComponents() {
-
-// TODO Auto-generated method stub
-
         mListView = (ListView) findViewById(android.R.id.list);
-
         btnShowCheckedItems = (Button) findViewById(R.id.btnShowCheckedItems);
-
     }
 
 
 
     private void init() {
-
-// TODO Auto-generated method stub
-
         mTools = new ArrayList<Tool>();
-
         mTools.add(new Tool("Sensor Data Logger"));
-
         mTools.add(new Tool("Gait Recognition"));
-
         mTools.add(new Tool("Posture Detection"));
-
         mTools.add(new Tool("Impact Detection"));
 
-
         mAdapter = new MyCustomAdapter<Tool>(this, mTools);
-
         mListView.setAdapter(mAdapter);
-
     }
 
 
 
     private void addListeners() {
-
-// TODO Auto-generated method stub
-
-        btnShowCheckedItems.setOnClickListener(this);
-
+       btnShowCheckedItems.setOnClickListener(this);
     }
 
 
     @Override
 
     public void onClick(View v) {
-
-// TODO Auto-generated method stub
-
-
         if(mAdapter != null) {
-
             ArrayList<Tool> mArrayTools = mAdapter.getCheckedItems();
-
             Log.d(MainActivity.class.getSimpleName(), "Selected Items: " + mArrayTools.toString());
-
             Toast.makeText(getApplicationContext(), "Selected Items: " + mArrayTools.toString(), Toast.LENGTH_LONG).show();
-
-
-            //todo fare partire il servizio che si occupa di inserire i campioni dell'accelerometro in un buffer circolare
 
            /* Intent intent = new Intent(getApplicationContext(), AccelerationSamplingService.class);
             startService(intent);
             finish();*/
+       }
+
+    }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(getApplicationContext(), UserInformationActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
         }
-
+        return super.onOptionsItemSelected(item);
     }
 
 
