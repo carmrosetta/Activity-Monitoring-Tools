@@ -5,6 +5,7 @@
     <string name="action_settings">User Information</string>
     <string name="title_activity_user_preferences">UserPreferencesActivity</string>
     <string name="save_data">Save your data</string>
-
+    <string name="title_activity_sensor_selection">SensorDataLoggerSettings</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

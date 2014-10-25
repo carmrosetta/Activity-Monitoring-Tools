@@ -111,9 +111,8 @@ public class MyCustomAdapter<T> extends BaseAdapter {
             public void onClick(View v) {
                 switch (position) {
                     case 0:
-                        Toast.makeText(mContext, "sensor data log", Toast.LENGTH_LONG).show();
-                        //Intent i = new Intent(mContext, SensorDataLoggerSettings.class);
-                        //mContext.startActivity(i);
+                        Intent i = new Intent(mContext, SensorDataLoggerSettings.class);
+                        mContext.startActivity(i);
                         break;
                     case 1:
                         break;

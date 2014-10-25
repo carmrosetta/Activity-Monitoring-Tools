@@ -20,6 +20,10 @@
             android:name=".UserInformationActivity"
             android:label="@string/title_activity_user_preferences" >
         </activity>
+        <activity
+            android:name=".SensorDataLoggerSettings"
+            android:label="@string/title_activity_sensor_selection" >
+        </activity>
     </application>
 
 </manifest>
