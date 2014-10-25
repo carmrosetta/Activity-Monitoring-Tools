@@ -1,17 +1,18 @@
 package ing.unipi.it.activitymonitoringtools;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,33 +21,11 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.os.Build;
-import android.os.Environment;
-import android.util.Log;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 
 public class Utilities {
 
 
-   /* @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void showNotification(Context context, NotificationManager notificationManager, String message, Class cls) {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle("Sensor Data Logger");
@@ -63,7 +42,25 @@ public class Utilities {
         notificationManager.notify(0, builder.build());
 
     }
-*/
+
+    /**
+     * @brief Method that shows an alert dialog
+     * @param context the application context
+     * @param message a String representing the message for the user
+     */
+    public static void showAlertDialog(Context context, String message) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setMessage(message);
+        alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertBuilder.show();
+    }
+
     public static String getSensorNameById(int sensorId, String name) {
         String sensorName = "";
         switch (sensorId) {

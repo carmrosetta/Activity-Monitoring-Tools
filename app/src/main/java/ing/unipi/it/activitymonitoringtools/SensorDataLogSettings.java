@@ -96,7 +96,7 @@ public class SensorDataLogSettings extends Activity {
     public void onSaveButtonPressed() {
         if(selectedSensors == 0) {
             //Toast.makeText(getApplicationContext(), "You must select at least a sensor", Toast.LENGTH_SHORT).show();
-           showAlertDialog();
+           Utilities.showAlertDialog(this, "You must select at least a sensor!");
 
         }
         else {
@@ -129,21 +129,7 @@ public class SensorDataLogSettings extends Activity {
 
     }
 
-    /**
-     * @brief Method that shows a dialog which tells the user he/she has to select at least a sensor
-     */
-    public void showAlertDialog() {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        alertBuilder.setMessage("You must select at least a sensor!");
-        alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
 
-        alertBuilder.show();
-    }
 
 
     /**

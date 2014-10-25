@@ -91,6 +91,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.d(MainActivity.class.getSimpleName(), "Selected Items: " + mArrayTools.toString());
             Toast.makeText(getApplicationContext(), "Selected Items: " + mArrayTools.toString(), Toast.LENGTH_LONG).show();
 
+            //TODO in base ai pulsanti abilitati devo avviare i servizi giusti con i parametri giusti
+
            /* Intent intent = new Intent(getApplicationContext(), AccelerationSamplingService.class);
             startService(intent);
             finish();*/
