@@ -21,7 +21,7 @@
             android:label="@string/title_activity_user_preferences" >
         </activity>
         <activity
-            android:name=".SensorDataLoggerSettings"
+            android:name=".SensorDataLogSettings"
             android:label="@string/title_activity_sensor_selection" >
         </activity>
     </application>

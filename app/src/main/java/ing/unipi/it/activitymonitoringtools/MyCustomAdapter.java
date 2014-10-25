@@ -111,7 +111,7 @@ public class MyCustomAdapter<T> extends BaseAdapter {
             public void onClick(View v) {
                 switch (position) {
                     case 0:
-                        Intent i = new Intent(mContext, SensorDataLoggerSettings.class);
+                        Intent i = new Intent(mContext, SensorDataLogSettings.class);
                         mContext.startActivity(i);
                         break;
                     case 1:

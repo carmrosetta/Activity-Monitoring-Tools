@@ -6,12 +6,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import ing.unipi.it.activitymonitoringtools.R;
 
-public class SensorDataLoggerSettings extends Activity {
+public class SensorDataLogSettings extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_selection);
+        setTitle(R.string.app_name);
     }
 
 
