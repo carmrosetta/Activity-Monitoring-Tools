@@ -1,7 +1,9 @@
 package ing.unipi.it.activitymonitoringtools;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -75,15 +77,31 @@ public class SensorDataLogSettings extends Activity {
         btnSaveData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectedSensors == 0) {
-                    Toast.makeText(getApplicationContext(), "You must select at least a sensor", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You have chosen "+selectedSensors+" sensors", Toast.LENGTH_SHORT).show();
+                onSaveButtonPressed();
 
-                }
             }
         });
+    }
+
+    public void onSaveButtonPressed() {
+        if(selectedSensors == 0) {
+            //Toast.makeText(getApplicationContext(), "You must select at least a sensor", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setMessage("You must select at least a sensor!");
+            alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            alertBuilder.show();
+
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "You have chosen "+selectedSensors+" sensors", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
 
