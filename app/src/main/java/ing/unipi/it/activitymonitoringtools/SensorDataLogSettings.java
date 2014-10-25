@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -33,6 +34,7 @@ public class SensorDataLogSettings extends Activity {
     private Spinner smartPhonePositionSpinner;
 
     private String smartPhonePosition = null;
+
     private String[] arraySmartPhonePosition;
 
     private LinearLayout sensorActivationList;
@@ -53,9 +55,11 @@ public class SensorDataLogSettings extends Activity {
 
     private int[] sensorDelays;
 
-    int selectedSensors = 0;
+    private int selectedSensors = 0;
 
     private List<SensorInfo> selectedSensorsList;
+
+    private Button btnSaveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,24 @@ public class SensorDataLogSettings extends Activity {
         initSmartPhonePositionSpinner();
 
         initSensorActivationList();
+
+        btnSaveData = (Button)findViewById(R.id.btnSaveData);
+        btnSaveData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selectedSensors == 0) {
+                    Toast.makeText(getApplicationContext(), "You must select at least a sensor", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "You have chosen "+selectedSensors+" sensors", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
     }
+
+
+
 
 
     /**
@@ -77,7 +98,7 @@ public class SensorDataLogSettings extends Activity {
 
         sensorActivationList = (LinearLayout) findViewById(R.id.sensorListLinearLayout);
         TextView tvSensorList = new TextView(this);
-        tvSensorList.setText("Available sensors: ");
+        tvSensorList.setText("Please select which sensors you want to use and at which speed ");
         tvSensorList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         sensorActivationList.addView(tvSensorList);
