@@ -10,6 +10,7 @@ import java.util.HashMap;
  * @file UserInformationManager.java
  * @brief Java class that helps in managing user information about his/her gender, age, height and
  * weight.
+ *
  * This class is used to save user information in key-value pairs.
  * This information is saved persistently in a xml file, that is it will persist across user
  * sessions, even if the application is killed.
@@ -24,6 +25,7 @@ public class UserInformationManager {
     public final static String USER_WEIGHT = "userWeight";
     public final static String USER_INFO_SAVED = "userInfoProvided";
     private final static String PREF_NAME = "UserInformation";
+
     SharedPreferences userInformation;
     SharedPreferences.Editor editor;
     Context _context;
@@ -31,7 +33,7 @@ public class UserInformationManager {
     /**
      * Constructor
      *
-     * @param[in] context   Global information about the application environment.
+     * @param context   Global information about the application environment (application context)
      * It allows access to application-specific resources and classes
      */
 
@@ -43,10 +45,10 @@ public class UserInformationManager {
 
     /**
      * @brief This method saves user information in a xml file in key-value pairs
-     * @param[in] userSex       String that specifies user gender
-     * @param[in] userAge       String that specifies user age
-     * @param[in] userHeight    String that specifies user height in centimeters
-     * @param[in] userWeight    String that specifies user weight in kilograms
+     * @param userSex       String that specifies user gender
+     * @param userAge       String that specifies user age
+     * @param userHeight    String that specifies user height in centimeters
+     * @param userWeight    String that specifies user weight in kilograms
      */
     public void saveUserInformation(String userSex, String userAge, String userHeight, String userWeight) {
 
@@ -66,7 +68,6 @@ public class UserInformationManager {
      * @return true if the user has provided his/her information, false otherwise
      *
      */
-
     public boolean userInformationSaved() {
         return userInformation.getBoolean(USER_INFO_SAVED, false);
     }

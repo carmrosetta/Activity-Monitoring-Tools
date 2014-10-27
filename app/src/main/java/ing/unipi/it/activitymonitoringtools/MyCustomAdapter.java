@@ -21,6 +21,7 @@ import android.widget.ToggleButton;
 
 /**
  * @brief Class that extends the Android BaseAdapter class and displays data in a ListView
+ * We use this class to display the tools the application offers to the user in the main activity of the application
  * @param <T> Class to which belong the objects displayed in the ListView
  */
 

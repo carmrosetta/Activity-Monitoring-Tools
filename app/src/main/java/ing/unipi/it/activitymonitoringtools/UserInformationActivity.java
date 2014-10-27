@@ -16,7 +16,12 @@ import java.util.HashMap;
 
 /**
  * @file  UserInformationActivity.java
- * @brief Android class that helps in managing user information.
+ * @brief Android class that helps in managing user information about gender, age, height and weight.
+ *
+ * This class, which extends the Android class Activity, shows a graphical user interface containing
+ * a form that the user has to fill in providing information about his/her gender, age, height and weight.
+ * This activity is shown to the user when he/she starts the application for the first time or when
+ * the user wants to update or delete information.
  *
  */
 

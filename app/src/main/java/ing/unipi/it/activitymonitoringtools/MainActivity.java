@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @file MainActivity.java
- * @brief Activity through which the user chooses which modules to activate
+ * @brief Activity through which the user chooses which modules of the application he/she wants to activate
  */
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -52,20 +52,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
         userInformationManager.checkUserInformationSaved();
 
         bindComponents();
-        init();
-        addListeners();
+        initToolList();
+        addOnClickListener();
 
     }
 
 
+    /**
+     * @brief This method allows to take control of the components of the graphical interface
+     */
     private void bindComponents() {
         mListView = (ListView) findViewById(android.R.id.list);
         btnShowCheckedItems = (Button) findViewById(R.id.btnShowCheckedItems);
     }
 
 
-
-    private void init() {
+    /**
+     * @brief This method allows to initialize the list of the tools
+     */
+    private void initToolList() {
         mTools = new ArrayList<Tool>();
         mTools.add(new Tool("Sensor Data Logger"));
         mTools.add(new Tool("Gait Recognition"));
@@ -77,8 +82,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-
-    private void addListeners() {
+    /**
+     * @brief this method sets a listener to the button, which allows to manage the user's choices
+     * through the method onClick()
+     */
+    private void addOnClickListener() {
        btnShowCheckedItems.setOnClickListener(this);
     }
 
@@ -88,7 +96,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if(mAdapter != null) {
             ArrayList<Tool> mArrayTools = mAdapter.getCheckedItems();
-            Log.d(MainActivity.class.getSimpleName(), "Selected Items: " + mArrayTools.toString());
+           // Log.d(MainActivity.class.getSimpleName(), "Selected Items: " + mArrayTools.toString());
             Toast.makeText(getApplicationContext(), "Selected Items: " + mArrayTools.toString(), Toast.LENGTH_LONG).show();
 
             //TODO in base ai pulsanti abilitati devo avviare i servizi giusti con i parametri giusti
