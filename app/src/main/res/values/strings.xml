@@ -16,7 +16,6 @@
         <item>Handbag</item>
         <item>Chest (jacket pocket)</item>
     </string-array>
-
     <string-array name="delay_rates_array">
         <item>SENSOR_DELAY_NORMAL</item>
         <item>SENSOR_DELAY_UI</item>
@@ -24,5 +23,6 @@
         <item>SENSOR_DELAY_FASTEST</item>
     </string-array>
 
+    <string name="title_activity_tools_">Tools_Activity</string>
 
 </resources>

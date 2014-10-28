@@ -150,7 +150,8 @@ public class UserInformationActivity extends Activity {
     public void saveUserData() {
         if(userDataInserted()) {
             userInformationManager.saveUserInformation(sex, age, height, weight);
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), Tools_Activity.class);
             startActivity(intent);
             finish();
         }

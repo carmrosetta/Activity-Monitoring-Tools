@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".Tools_Activity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +24,7 @@
             android:name=".SensorDataLogSettings"
             android:label="@string/title_activity_sensor_selection" >
         </activity>
+
     </application>
 
 </manifest>

@@ -55,6 +55,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         initToolList();
         addOnClickListener();
 
+
+
+
+
     }
 
 
@@ -78,7 +82,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mTools.add(new Tool("Impact Detection"));
 
         mAdapter = new MyCustomAdapter<Tool>(this, mTools);
+
         mListView.setAdapter(mAdapter);
+
     }
 
 

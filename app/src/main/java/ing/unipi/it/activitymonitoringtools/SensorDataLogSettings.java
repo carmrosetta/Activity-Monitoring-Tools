@@ -37,6 +37,7 @@ public class SensorDataLogSettings extends Activity {
 
     public final static int SENSORS_SELECTED = 1;
 
+
     private Spinner smartPhonePositionSpinner;
 
     private String smartPhonePosition = null;
@@ -253,5 +254,9 @@ public class SensorDataLogSettings extends Activity {
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
