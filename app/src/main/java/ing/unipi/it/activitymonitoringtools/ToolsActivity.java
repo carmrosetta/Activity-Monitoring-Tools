@@ -1,7 +1,10 @@
 package ing.unipi.it.activitymonitoringtools;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +15,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @file ToolsActivity.java
  * @brief This is tha main activity of the application
+ * This is the activity through which the user chooses which modules of the application he/she wants to activate
  */
 public class ToolsActivity extends Activity {
 
@@ -50,6 +55,10 @@ public class ToolsActivity extends Activity {
 
     private Button btnStartServices;
 
+
+    /**
+     * @brief This method initializes the graphical user interface of this activity
+     */
     private void bindComponents() {
 
         active = new boolean[NUM_TOOLS];
@@ -69,6 +78,9 @@ public class ToolsActivity extends Activity {
         btnStartServices = (Button) findViewById(R.id.btnStartServices);
     }
 
+    /**
+     * @brief This method sets the event listener on the graphical components of the interface
+     */
     public void setListeners() {
 
         enableSensorLog.setOnCheckedChangeListener(sensorLogChangeListener);
@@ -120,7 +132,6 @@ public class ToolsActivity extends Activity {
     };
 
 
-
     View.OnClickListener startBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -144,8 +155,10 @@ public class ToolsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!toolsRunning) {
+        if (!toolsRunning) {
             setContentView(R.layout.activity_tools);
+
+            selectedSensorsList = new LinkedList<SensorInfo>();
 
             userInformationManager = new UserInformationManager(getApplicationContext());
             userInformationManager.checkUserInformationSaved();
@@ -153,8 +166,7 @@ public class ToolsActivity extends Activity {
 
             bindComponents();
             setListeners();
-        }
-        else {
+        } else {
             setContentView(R.layout.activity_stop);
         }
     }
@@ -180,6 +192,8 @@ public class ToolsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SELECT_SENSORS) {
@@ -192,22 +206,26 @@ public class ToolsActivity extends Activity {
         }
     }
 
+
+    /**
+     * @brief This method starts the services that are the tools of the application
+     */
     public void startServices() {
         toolsRunning = true;
-        if(enableSensorLog.isChecked()) {
-           // Toast.makeText(getApplicationContext(), "SENSOR LOG ", Toast.LENGTH_SHORT).show();
+        if (enableSensorLog.isChecked()) {
+            //Toast.makeText(getApplicationContext(), "SENSOR LOG ", Toast.LENGTH_SHORT).show();
             startSensorLog();
         }
 
-        if(enableGaitRecog.isChecked()) {
+        if (enableGaitRecog.isChecked()) {
             Toast.makeText(getApplicationContext(), "GAIT ", Toast.LENGTH_SHORT).show();
         }
 
-        if(enablePostureDetect.isChecked()) {
+        if (enablePostureDetect.isChecked()) {
             Toast.makeText(getApplicationContext(), "POSTURE ", Toast.LENGTH_SHORT).show();
         }
 
-        if(enableImpactDetect.isChecked()) {
+        if (enableImpactDetect.isChecked()) {
             Toast.makeText(getApplicationContext(), "IMPACT ", Toast.LENGTH_SHORT).show();
         }
 
@@ -216,16 +234,34 @@ public class ToolsActivity extends Activity {
     }
 
 
+    /**
+     * @brief This is the method that starts the sensor log module of the application
+     */
     public void startSensorLog() {
 
-           if(smartPhonePosition == null && selectedSensorsList == null) {
+        if (smartPhonePosition == null && selectedSensorsList == null) {
+            smartPhonePosition = "Right front trouser pocket";
 
-           }
+            SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            SensorInfo accelerometerInfo = new SensorInfo(accelerometer.getType(), accelerometer.getName(), SensorManager.SENSOR_DELAY_GAME, accelerometer.getMaximumRange());
+            selectedSensorsList.add(accelerometerInfo);
+        }
+
+        Intent intent = new Intent(this.getApplicationContext(), SensorDataLogService.class);
+        intent.putExtra("Smartphone position", smartPhonePosition);
+        intent.putExtra("Selected sensors", (java.io.Serializable) selectedSensorsList);
+        startService(intent);
 
     }
 
+    /**
+     * @param view the button the user has to click to stop the modules
+     * @brief This method stops all the modules of the application
+     */
     public void stopServices(View view) {
-        toolsRunning=false;
+        toolsRunning = false;
+        stopService(new Intent(getApplicationContext(), SensorDataLogService.class));
         Intent i = new Intent(getApplicationContext(), ToolsActivity.class);
         startActivity(i);
         finish();

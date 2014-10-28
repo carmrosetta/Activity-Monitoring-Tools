@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class SensorDataLogService extends Service {
+
+    public static final int SCREEN_OFF_RECEIVER_DELAY = 500;
+
+
     public SensorDataLogService() {
     }
 
