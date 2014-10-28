@@ -14,8 +14,13 @@ import android.widget.ToggleButton;
 
 import java.util.List;
 
+/**
+ * @file ToolsActivity.java
+ * @brief This is tha main activity of the application
+ */
+public class ToolsActivity extends Activity {
 
-public class Tools_Activity extends Activity {
+    public static boolean toolsRunning = false;
 
     public final static int SELECT_SENSORS = 1;
 
@@ -28,17 +33,21 @@ public class Tools_Activity extends Activity {
 
     boolean[] active;
 
-    private String smartPhonePosition;
-    private List<SensorInfo> selectedSensorsList;
+    private String smartPhonePosition = null;
+    private List<SensorInfo> selectedSensorsList = null;
+
     private UserInformationManager userInformationManager;
+
     private ToggleButton enableSensorLog;
     private ToggleButton enableGaitRecog;
     private ToggleButton enablePostureDetect;
     private ToggleButton enableImpactDetect;
+
     private ImageButton settingsSensorLog;
     private ImageButton settingsGaitRecog;
     private ImageButton settingsPostureDetect;
     private ImageButton settingsImpactDetect;
+
     private Button btnStartServices;
 
     private void bindComponents() {
@@ -134,14 +143,20 @@ public class Tools_Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tools);
 
-        userInformationManager = new UserInformationManager(getApplicationContext());
-        userInformationManager.checkUserInformationSaved();
+        if(!toolsRunning) {
+            setContentView(R.layout.activity_tools);
+
+            userInformationManager = new UserInformationManager(getApplicationContext());
+            userInformationManager.checkUserInformationSaved();
 
 
-        bindComponents();
-        setListeners();
+            bindComponents();
+            setListeners();
+        }
+        else {
+            setContentView(R.layout.activity_stop);
+        }
     }
 
 
@@ -170,7 +185,7 @@ public class Tools_Activity extends Activity {
         if (requestCode == SELECT_SENSORS) {
             if (resultCode == SensorDataLogSettings.SENSORS_SELECTED) {
                 smartPhonePosition = data.getStringExtra("Smartphone position");
-                //Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
                 selectedSensorsList = (List<SensorInfo>) data.getSerializableExtra("Selected sensors");
             }
 
@@ -178,8 +193,10 @@ public class Tools_Activity extends Activity {
     }
 
     public void startServices() {
+        toolsRunning = true;
         if(enableSensorLog.isChecked()) {
-            Toast.makeText(getApplicationContext(), "SENSOR LOG ", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(), "SENSOR LOG ", Toast.LENGTH_SHORT).show();
+            startSensorLog();
         }
 
         if(enableGaitRecog.isChecked()) {
@@ -194,7 +211,23 @@ public class Tools_Activity extends Activity {
             Toast.makeText(getApplicationContext(), "IMPACT ", Toast.LENGTH_SHORT).show();
         }
 
+        finish();
+
+    }
 
 
+    public void startSensorLog() {
+
+           if(smartPhonePosition == null && selectedSensorsList == null) {
+
+           }
+
+    }
+
+    public void stopServices(View view) {
+        toolsRunning=false;
+        Intent i = new Intent(getApplicationContext(), ToolsActivity.class);
+        startActivity(i);
+        finish();
     }
 }
