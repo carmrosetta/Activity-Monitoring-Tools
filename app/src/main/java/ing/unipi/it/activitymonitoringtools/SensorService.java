@@ -1,9 +1,12 @@
 package ing.unipi.it.activitymonitoringtools;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.os.PowerManager;
 
 import java.util.List;
 

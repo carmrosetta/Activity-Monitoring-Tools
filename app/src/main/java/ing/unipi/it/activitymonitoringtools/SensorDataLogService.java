@@ -1,7 +1,6 @@
 package ing.unipi.it.activitymonitoringtools;
 
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,13 +27,13 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     File[] samplesDirectories;
     File[] samplesFiles;
 
-    //SensorManager sensorManager;
 
     private NotificationManager notificationManager;
 
     String smartPhonePosition;
-   // public List<SensorInfo> selectedSensorsData;
 
+    //SensorManager sensorManager;
+    //public List<SensorInfo> selectedSensorsData;
     //ActionScreenOffReceiver actionScreenOffReceiver;
 
 
@@ -43,11 +42,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         super();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+
 
     @Override
     public void onCreate() {

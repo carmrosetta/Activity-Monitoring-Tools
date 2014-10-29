@@ -60,6 +60,9 @@ public class UserInformationActivity extends Activity {
             header.setText("Update or clear your information");
             HashMap<String, String> user = userInformationManager.getUserInformation();
 
+            userSex.setSelection(user.get(UserInformationManager.USER_SEX).equals("M") ? 0:1);
+
+
             userAge.setText(user.get(UserInformationManager.USER_AGE));
             userHeight.setText(user.get(UserInformationManager.USER_HEIGHT));
             userWeight.setText(user.get(UserInformationManager.USER_WEIGHT));
