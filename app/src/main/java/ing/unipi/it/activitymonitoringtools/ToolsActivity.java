@@ -200,8 +200,11 @@ public class ToolsActivity extends Activity {
         if (requestCode == SELECT_SENSORS) {
             if (resultCode == SensorDataLogSettings.SENSORS_SELECTED) {
                 smartPhonePosition = data.getStringExtra("Smartphone position");
-                Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
                 selectedSensorsList = (List<SensorInfo>) data.getSerializableExtra("Selected sensors");
+                for(SensorInfo s : selectedSensorsList ) {
+                    Toast.makeText(getApplicationContext(), ""+s.getSensorType(), Toast.LENGTH_SHORT).show();
+                }
             }
 
         }
