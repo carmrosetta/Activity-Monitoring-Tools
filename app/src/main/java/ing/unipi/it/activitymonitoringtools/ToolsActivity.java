@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -239,7 +240,7 @@ public class ToolsActivity extends Activity {
      */
     public void startSensorLog() {
 
-        if (smartPhonePosition == null && selectedSensorsList == null) {
+        if(selectedSensorsList.size()==0) {
             smartPhonePosition = "Right front trouser pocket";
 
             SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

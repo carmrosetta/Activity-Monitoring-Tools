@@ -4,38 +4,32 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.util.Log;
 
 import java.util.List;
 
 public class ActionScreenOffReceiver extends BroadcastReceiver {
 
-    public static final int SCREEN_OFF_RECEIVER_DELAY = 500;
+    public final static int SCREEN_OFF_RECEIVER_DELAY = 500;
 
-    SensorManager sensorManager;
+    private SensorManager sensorManager;
     SensorEventListener sensorEventListener;
-    List<SensorInfo> activeSensors;
-    NotificationManager notificationManager;
-    Class cls;
-
 
 
     public ActionScreenOffReceiver() {
     }
 
-    public ActionScreenOffReceiver(SensorManager sensorManager, SensorEventListener sensorEventListener, List<SensorInfo> activeSensors, NotificationManager notificationManager, Class cls) {
+    public ActionScreenOffReceiver(SensorManager sensorManager, SensorEventListener sensorEventListener) {
         this.sensorManager = sensorManager;
         this.sensorEventListener = sensorEventListener;
-        this.activeSensors = activeSensors;
-        this.notificationManager = notificationManager;
-        this.cls = cls;
     }
 
-
-
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
 
         if (!intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             return;
@@ -44,19 +38,28 @@ public class ActionScreenOffReceiver extends BroadcastReceiver {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                Log.e("screen off event", "the screen went off ");
 
-                sensorManager.unregisterListener(sensorEventListener);
 
-                for(SensorInfo s : activeSensors) {
-                    sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(s.getSensorType()), s.getSensorSpeed());
-                }
-
-                notificationManager.cancelAll();
-                notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                Utilities.showNotification(context, notificationManager,"Service Running" ,cls );
-
+                reactivateListeners();
+             //   notificationManager.cancelAll();
+             //   notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+             //   Utilities.showNotification(getApplicationContext(), notificationManager, "Service running", MainActivity.class);
 
             }
         };
+
+        new Handler().postDelayed(runnable, SCREEN_OFF_RECEIVER_DELAY);
+
     }
+
+    public void reactivateListeners() {
+        sensorManager.unregisterListener(sensorEventListener);
+        for(SensorInfo s : /*SensorDataLogService.selectedSensorsData*/((SensorService)sensorEventListener).selectedSensorsData) {
+            sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(s.getSensorType()), s.getSensorSpeed());
+        }
+
+        Log.e("Listeners registered", "listeners registered from broadcast receiver "+((SensorDataLogService)sensorEventListener).selectedSensorsData.size());
+    }
+
 }
