@@ -79,11 +79,23 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         String generalHeader = getGeneralHeader(now, smartPhonePosition);
        // Toast.makeText(getApplicationContext(), generalHeader, Toast.LENGTH_LONG).show();
 
-        for(SensorInfo s : selectedSensorsData) {
-            String sensorHeader = getSensorSpecificHeader(s.getSensorType(), s);
-            String relationHeader = getRelationHeader(s.getSensorType());
-            //scrittura su file
-        }
+        for(int i=0; i < selectedSensorsData.size(); i++) {
+
+            String sensorHeader = getSensorSpecificHeader(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i));
+            String relationHeader = getRelationHeader(selectedSensorsData.get(i).getSensorType());
+
+            //creazione file e directories
+            String sensorName = Utilities.getSensorNameById(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i).getSensorName());
+            samplesDirectories[i] = Utilities.createDirectory("SensorDataLog/Samples/"+sensorName+
+                    "/"+Utilities.getDateTimeFromMillis(now, "yy-MM-dd"));
+            samplesFiles[i] = Utilities.createFile(samplesDirectories[i],Utilities.getDateTimeFromMillis(now, "kk-mm")+".arff");
+
+
+            Utilities.writeData(samplesFiles[i], sensorHeader);
+            Utilities.writeData(samplesFiles[i], generalHeader);
+            Utilities.writeData(samplesFiles[i], relationHeader);
+
+            }
 
 
 
