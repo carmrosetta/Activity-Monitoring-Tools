@@ -52,7 +52,7 @@ public class SensorEventBuffer {
         SensorEvent event;
 
         lock.lock();
-        boolean removeElement = true;
+
         try {
             while (counter == 0)
                 notEmpty.await();
@@ -66,6 +66,26 @@ public class SensorEventBuffer {
         }
 
         return event;
+    }
+
+
+
+    public SensorEvent[] getNSensorEvents(int num) throws InterruptedException {
+        SensorEvent[] events = new SensorEvent[num];
+        lock.lock();
+        try {
+            while (counter < num) notEmpty.await();
+            System.arraycopy(circularBuffer, head, events, 0, num);
+            head = (head+num)%dimBuffer;
+            counter -=num;
+            for(int i = 0; i < num; i ++) {
+                notFull.signal();
+            }
+        }finally {
+            lock.unlock();
+        }
+
+        return events;
     }
 
 

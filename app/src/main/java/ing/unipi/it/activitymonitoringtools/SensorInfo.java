@@ -269,7 +269,7 @@ public class SensorInfo implements Serializable {
                 numSamplesPerSec = 50;
                 break;
             case SensorManager.SENSOR_DELAY_FASTEST:
-                numSamplesPerSec = 1000;
+                numSamplesPerSec = 100;
                 break;
         }
 

@@ -13,6 +13,7 @@ import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.util.Log;
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
     private File[] samplesDirectories;
     private File[] samplesFiles;
+    private boolean[] isFirstSample;
+    private long[] lastUpdateTimestamp;
+    private long[] cont;
 
 
     private NotificationManager notificationManager;
@@ -72,7 +76,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         Log.e("Sensor data log service started", "service started");
 
 
-        timer = new SavingSamplesTimer(10000, 1000);//ten seconds
+       /* timer = new SavingSamplesTimer(10000, 1000);//ten seconds
 
         if(!timerStarted) {
             timer.start();
@@ -81,7 +85,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
             timer.cancel();
             timerStarted = false;
         }
-
+*/
 
         Bundle extras = intent.getExtras();
         smartPhonePosition = (String) extras.get("Smartphone position");
@@ -90,6 +94,10 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
         samplesDirectories = new File[activeSensors];
         samplesFiles = new File[activeSensors];
+        isFirstSample = new boolean[activeSensors];
+        lastUpdateTimestamp = new long[activeSensors];
+        cont = new long[activeSensors];
+
         //todo create a buffer for each sensor
         long now = System.currentTimeMillis();
 
@@ -97,6 +105,9 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
        // Toast.makeText(getApplicationContext(), generalHeader, Toast.LENGTH_LONG).show();
 
         for(int i=0; i < selectedSensorsData.size(); i++) {
+            isFirstSample[i] = true;
+            lastUpdateTimestamp[i] = 0;
+            cont[i] = 0;
 
             String sensorHeader = getSensorSpecificHeader(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i));
             String relationHeader = getRelationHeader(selectedSensorsData.get(i).getSensorType());
@@ -164,6 +175,18 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     public void onSensorChanged(SensorEvent event) {
        for(int i = 0; i < activeSensors; i++) {
            if(event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
+               long timestampInMillis = (new Date()).getTime()+(event.timestamp - System.nanoTime())/1000000L;
+                if(isFirstSample[i]) {
+                    lastUpdateTimestamp[i] = timestampInMillis;
+                    isFirstSample[i] = false;
+                }
+
+               long diff = timestampInMillis - lastUpdateTimestamp[i];
+               cont[i] += diff;
+               lastUpdateTimestamp[i] = timestampInMillis;
+
+
+               Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
 
            }
 
