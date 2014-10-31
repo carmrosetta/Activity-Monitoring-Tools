@@ -177,7 +177,7 @@ public class SensorDataLogSettings extends Activity {
             sensorSamplingSpeeds[i] = new Spinner(this);
 
             sensorChoices[i].addView(sensors[i]);
-            sensors[i].setText(Utilities.getSensorNameById(sensorList.get(i).getType(), sensorList.get(i).getName()));
+            sensors[i].setText(SensorInfo.getSensorNameById(sensorList.get(i).getType(), sensorList.get(i).getName()));
             sensorTypes[i] = sensorList.get(i).getType();
             sensors[i].setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
             sensors[i].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

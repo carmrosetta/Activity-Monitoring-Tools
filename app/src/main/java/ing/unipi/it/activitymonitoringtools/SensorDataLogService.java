@@ -9,34 +9,38 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * @brief Class that describes the background service that collects sensor samples and saves them in a file
+ */
 public class SensorDataLogService extends SensorService implements SensorEventListener {
 
     public static final String TAG = SensorDataLogService.class.getName();
 
     private PowerManager.WakeLock mWakeLock = null;
 
-    int activeSensors = 0;
+    private int activeSensors = 0;
 
-    File[] samplesDirectories;
-    File[] samplesFiles;
+    private File[] samplesDirectories;
+    private File[] samplesFiles;
 
 
     private NotificationManager notificationManager;
 
-    String smartPhonePosition;
+    private String smartPhonePosition;
 
     //SensorManager sensorManager;
     //public List<SensorInfo> selectedSensorsData;
     //ActionScreenOffReceiver actionScreenOffReceiver;
+
+    private SavingSamplesTimer timer;
+    private boolean timerStarted = false;
 
 
 
@@ -64,7 +68,20 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
         Log.e("Sensor data log service started", "service started");
+
+
+        timer = new SavingSamplesTimer(10000, 1000);//ten seconds
+
+        if(!timerStarted) {
+            timer.start();
+            timerStarted = true;
+        } else {
+            timer.cancel();
+            timerStarted = false;
+        }
+
 
         Bundle extras = intent.getExtras();
         smartPhonePosition = (String) extras.get("Smartphone position");
@@ -73,7 +90,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
         samplesDirectories = new File[activeSensors];
         samplesFiles = new File[activeSensors];
-
+        //todo create a buffer for each sensor
         long now = System.currentTimeMillis();
 
         String generalHeader = getGeneralHeader(now, smartPhonePosition);
@@ -85,15 +102,26 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
             String relationHeader = getRelationHeader(selectedSensorsData.get(i).getSensorType());
 
             //creazione file e directories
-            String sensorName = Utilities.getSensorNameById(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i).getSensorName());
-            samplesDirectories[i] = Utilities.createDirectory("SensorDataLog/Samples/"+sensorName+
+            String sensorName = SensorInfo.getSensorNameById(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i).getSensorName());
+            samplesDirectories[i] = Utilities.createDirectory("ActivityMonitoringTools/SensorDataLog/Samples/"+sensorName+
                     "/"+Utilities.getDateTimeFromMillis(now, "yy-MM-dd"));
             samplesFiles[i] = Utilities.createFile(samplesDirectories[i],Utilities.getDateTimeFromMillis(now, "kk-mm")+".arff");
 
+            //creazione di un buffer per ciascun sensore utilizzato
 
-            Utilities.writeData(samplesFiles[i], sensorHeader);
-            Utilities.writeData(samplesFiles[i], generalHeader);
-            Utilities.writeData(samplesFiles[i], relationHeader);
+            int numSamplesPerSec = selectedSensorsData.get(i).getNumSamplesPerSec(selectedSensorsData.get(i).getSensorSpeed());
+            int dimBuf = 10 * numSamplesPerSec;//ten seconds of samples
+
+
+            //todo instantiate the buffer for the sensor with the proper dimension
+
+            if(Utilities.getFileSize(samplesFiles[i])==0) {
+
+                Utilities.writeData(samplesFiles[i], sensorHeader);
+                Utilities.writeData(samplesFiles[i], generalHeader);
+                Utilities.writeData(samplesFiles[i], relationHeader);
+            }
+
 
             }
 
@@ -134,8 +162,12 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
    @Override
     public void onSensorChanged(SensorEvent event) {
+       for(int i = 0; i < activeSensors; i++) {
+           if(event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
 
-      // Log.e("sampled",""+event.timestamp);
+           }
+
+       }
 
     }
 
@@ -148,13 +180,13 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
     public String getSensorSpecificHeader(int sensorId, SensorInfo sensorInfo) {
 
-        String sensorName = Utilities.getSensorNameById(sensorId, sensorInfo.getSensorName());
+        String sensorName = SensorInfo.getSensorNameById(sensorId, sensorInfo.getSensorName());
         float sensorRange = sensorInfo.getMaxRange();
-        String sensorSpeed = Utilities.getAndroidSamplingRateById(sensorInfo.getSensorSpeed());
+        String sensorSpeed = sensorInfo.getAndroidSamplingRateById(sensorInfo.getSensorSpeed());
 
 
         String sensorHeader = "% "+sensorName+" Track\n%\n"+
-                              "% Range: "+sensorRange+" "+Utilities.getSensorUnitById(sensorInfo.getSensorType())+"\n"+
+                              "% Range: "+sensorRange+" "+SensorInfo.getSensorUnitById(sensorInfo.getSensorType())+"\n"+
                               "% Android Sampling Rate : "+sensorSpeed+"\n";
         return sensorHeader;
     }
@@ -339,5 +371,36 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         }
         return relationHeader;
     }
+
+
+    class SavingSamplesTimer extends CountDownTimer {
+
+         /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public SavingSamplesTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            Log.e("Time's up", "time's up");
+
+
+            this.start();
+
+        }
+    }
+
 
 }

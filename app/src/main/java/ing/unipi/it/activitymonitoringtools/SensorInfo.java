@@ -1,5 +1,8 @@
 package ing.unipi.it.activitymonitoringtools;
 
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+
 import java.io.Serializable;
 
 /**
@@ -91,4 +94,188 @@ public class SensorInfo implements Serializable {
     public void setMaxRange(float maxRange) {
         this.maxRange = maxRange;
     }
+
+
+    public static String getSensorNameById(int sensorId, String name) {
+        String sensorName = "";
+        switch (sensorId) {
+            case Sensor.TYPE_ACCELEROMETER:
+                sensorName = "Accelerometer";
+                break;
+            case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                sensorName = "Thermometer";
+                break;
+            case Sensor.TYPE_GAME_ROTATION_VECTOR:
+                sensorName = "Game Rotation Sensor";
+                break;
+            case Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR:
+                sensorName = "Geomagnetic Rotation Vector Sensor";
+                break;
+            case Sensor.TYPE_GRAVITY:
+                sensorName = "Gravity Sensor";
+                break;
+            case Sensor.TYPE_GYROSCOPE:
+                sensorName = "Gyroscope";
+                break;
+            case Sensor.TYPE_GYROSCOPE_UNCALIBRATED:
+                sensorName = "Uncalibrated Gyroscope";
+                break;
+            case Sensor.TYPE_HEART_RATE:
+                sensorName = "Heart Rate Sensor";
+                break;
+            case Sensor.TYPE_LIGHT:
+                sensorName = "Light Sensor";
+                break;
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                sensorName = "Linear Acceleration Sensor";
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                sensorName = "Magnetic Field Sensor";
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
+                sensorName = "Uncalibrated Magnetic Field Sensor";
+                break;
+            case Sensor.TYPE_PRESSURE:
+                sensorName = "Barometer";
+                break;
+            case Sensor.TYPE_PROXIMITY:
+                sensorName = "Proximity Sensor";
+                break;
+            case Sensor.TYPE_RELATIVE_HUMIDITY:
+                sensorName = "Relative Humidity Sensor";
+                break;
+            case Sensor.TYPE_ROTATION_VECTOR:
+                sensorName = "Rotation Vector Sensor";
+                break;
+            case Sensor.TYPE_SIGNIFICANT_MOTION:
+                sensorName = "Significant Motion Sensor";
+                break;
+            case Sensor.TYPE_STEP_COUNTER:
+                sensorName = "Step Counter";
+                break;
+            case Sensor.TYPE_STEP_DETECTOR:
+                sensorName = "Step Detector";
+                break;
+            default:
+                sensorName = name;
+                break;
+
+        }
+        return sensorName;
+    }
+
+    public static String getSensorUnitById(int sensorId) {
+        String unit = "";
+        switch (sensorId) {
+            case Sensor.TYPE_ACCELEROMETER:
+                unit = "[m/s^2]";
+                break;
+            case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                unit = "°C";
+                break;
+            case Sensor.TYPE_GAME_ROTATION_VECTOR:
+                unit = "°";
+                break;
+            case Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR:
+                unit = "°";
+                break;
+            case Sensor.TYPE_GRAVITY:
+                unit = "[m/s^2]";
+                break;
+            case Sensor.TYPE_GYROSCOPE:
+                unit = "[rad/sec]";
+                break;
+            case Sensor.TYPE_GYROSCOPE_UNCALIBRATED:
+                unit = "[rad/sec]";
+                break;
+            case Sensor.TYPE_HEART_RATE:
+                unit = "[bpm]";
+                break;
+            case Sensor.TYPE_LIGHT:
+                unit = "[lx]";
+                break;
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                unit = "[m/s^2]";
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                unit = "[μT]";
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
+                unit = "[μT]";
+                break;
+            case Sensor.TYPE_PRESSURE:
+                unit = "[mbars]";
+                break;
+            case Sensor.TYPE_PROXIMITY:
+                unit = "[cm]";
+                break;
+            case Sensor.TYPE_RELATIVE_HUMIDITY:
+                unit = "[%]";
+                break;
+            case Sensor.TYPE_ROTATION_VECTOR:
+                unit = "°";
+                break;
+            case Sensor.TYPE_SIGNIFICANT_MOTION:
+                unit = "";
+                break;
+            case Sensor.TYPE_STEP_COUNTER:
+                unit = "[number of steps]";
+                break;
+            case Sensor.TYPE_STEP_DETECTOR:
+                unit = "";
+                break;
+            default:
+                unit = "";
+                break;
+
+        }
+        return unit;
+    }
+
+    public String getAndroidSamplingRateById(int sensorSamplingRate) {
+        String androidSamplingRate = "";
+
+        switch (sensorSamplingRate) {
+            case SensorManager.SENSOR_DELAY_NORMAL:
+                androidSamplingRate = "SensorManager.SENSOR_DELAY_NORMAL";
+                break;
+            case SensorManager.SENSOR_DELAY_UI:
+                androidSamplingRate = "SensorManager.SENSOR_DELAY_UI";
+                break;
+            case SensorManager.SENSOR_DELAY_GAME:
+                androidSamplingRate = "SensorManager.SENSOR_DELAY_GAME";
+                break;
+            case SensorManager.SENSOR_DELAY_FASTEST:
+                androidSamplingRate = "SensorManager.SENSOR_DELAY_FASTEST";
+                break;
+        }
+
+        return androidSamplingRate;
+    }
+
+
+
+    public int getNumSamplesPerSec(int androidSamplingRate) {
+        int numSamplesPerSec = 0;
+
+        switch (androidSamplingRate) {
+            case SensorManager.SENSOR_DELAY_NORMAL:
+                numSamplesPerSec = 5;
+                break;
+            case SensorManager.SENSOR_DELAY_UI:
+                numSamplesPerSec = 15;
+                break;
+            case SensorManager.SENSOR_DELAY_GAME:
+                numSamplesPerSec = 50;
+                break;
+            case SensorManager.SENSOR_DELAY_FASTEST:
+                numSamplesPerSec = 1000;
+                break;
+        }
+
+        return numSamplesPerSec;
+    }
+
+
+
 }

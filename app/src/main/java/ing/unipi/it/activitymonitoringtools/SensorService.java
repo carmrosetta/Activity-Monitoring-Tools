@@ -11,7 +11,8 @@ import android.os.PowerManager;
 import java.util.List;
 
 /**
- * Created by carmen on 29/10/14.
+ * @brief Class that represents all the background services that use sensors and that have to cope
+ * with the ACTION_SCREEN_OFF event
  */
 public class SensorService extends Service {
 
