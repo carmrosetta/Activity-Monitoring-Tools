@@ -185,8 +185,14 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
                cont[i] += diff;
                lastUpdateTimestamp[i] = timestampInMillis;
 
+               String sensedValues = "";
 
-               Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
+               for(int j = 0; j < event.values.length; j++) {
+                   sensedValues += ", "+event.values[j];
+               }
+
+               //Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
+               Utilities.writeData(samplesFiles[i], Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n"+"\n");
 
            }
 
