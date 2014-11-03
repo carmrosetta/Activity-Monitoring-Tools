@@ -192,7 +192,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
                }
 
                //Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
-               Utilities.writeData(samplesFiles[i], Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n"+"\n");
+               Utilities.writeData(samplesFiles[i], Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n");
 
            }
 

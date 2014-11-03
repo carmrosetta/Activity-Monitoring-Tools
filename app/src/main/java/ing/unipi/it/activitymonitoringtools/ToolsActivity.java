@@ -202,9 +202,7 @@ public class ToolsActivity extends Activity {
                 smartPhonePosition = data.getStringExtra("Smartphone position");
                 //Toast.makeText(getApplicationContext(), smartPhonePosition, Toast.LENGTH_SHORT).show();
                 selectedSensorsList = (List<SensorInfo>) data.getSerializableExtra("Selected sensors");
-                for(SensorInfo s : selectedSensorsList ) {
-                    Toast.makeText(getApplicationContext(), ""+s.getSensorType(), Toast.LENGTH_SHORT).show();
-                }
+
             }
 
         }
@@ -243,7 +241,7 @@ public class ToolsActivity extends Activity {
      */
     public void startSensorLog() {
 
-        if(selectedSensorsList.size()==0) {
+        if (selectedSensorsList.size() == 0) {
             smartPhonePosition = "Right front trouser pocket";
 
             SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
