@@ -175,7 +175,10 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     public void onSensorChanged(SensorEvent event) {
        for(int i = 0; i < activeSensors; i++) {
            if(event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
-               long timestampInMillis = (new Date()).getTime()+(event.timestamp - System.nanoTime())/1000000L;
+               long timestampInMillis =  Utilities.getEventTimestampInMillis(event.timestamp);
+
+
+
                 if(isFirstSample[i]) {
                     lastUpdateTimestamp[i] = timestampInMillis;
                     isFirstSample[i] = false;
@@ -192,7 +195,8 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
                }
 
                //Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
-               Utilities.writeData(samplesFiles[i], Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n");
+              Utilities.writeData(samplesFiles[i],Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n");
+
 
            }
 
