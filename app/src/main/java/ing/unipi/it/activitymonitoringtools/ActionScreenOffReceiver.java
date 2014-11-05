@@ -38,7 +38,7 @@ public class ActionScreenOffReceiver extends BroadcastReceiver {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Log.e("screen off event", "the screen went off ");
+               // Log.e("screen off event", "the screen went off ");
 
 
                 reactivateListeners();

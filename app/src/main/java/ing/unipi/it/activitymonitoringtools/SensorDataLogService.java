@@ -8,17 +8,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.util.Log;
+
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * @brief Class that describes the background service that collects sensor samples and saves them in a file
+ * @brief Class that describes the background service that collects sensor samples and saves them into a file
  */
 public class SensorDataLogService extends SensorService implements SensorEventListener {
 
@@ -34,18 +35,19 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     private long[] lastUpdateTimestamp;
     private long[] cont;
 
+    private int numSamplesPerSec[];
+    private int dimbuf[];
+
+    private SampleDataBuffer[] samplesBuffer;
+
+
 
     private NotificationManager notificationManager;
 
     private String smartPhonePosition;
 
-    //SensorManager sensorManager;
-    //public List<SensorInfo> selectedSensorsData;
-    //ActionScreenOffReceiver actionScreenOffReceiver;
-
     private SavingSamplesTimer timer;
     private boolean timerStarted = false;
-
 
 
     public SensorDataLogService() {
@@ -53,12 +55,11 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     }
 
 
-
     @Override
     public void onCreate() {
         super.onCreate();
 
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         actionScreenOffReceiver = new ActionScreenOffReceiver(sensorManager, this);
 
@@ -76,16 +77,16 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         Log.e("Sensor data log service started", "service started");
 
 
-       /* timer = new SavingSamplesTimer(10000, 1000);//ten seconds
+        timer = new SavingSamplesTimer(5000, 1000);//five seconds
 
-        if(!timerStarted) {
+        if (!timerStarted) {
             timer.start();
             timerStarted = true;
         } else {
             timer.cancel();
             timerStarted = false;
         }
-*/
+
 
         Bundle extras = intent.getExtras();
         smartPhonePosition = (String) extras.get("Smartphone position");
@@ -98,13 +99,18 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         lastUpdateTimestamp = new long[activeSensors];
         cont = new long[activeSensors];
 
+        numSamplesPerSec = new int[activeSensors];
+        dimbuf = new int[activeSensors];
+
+        samplesBuffer = new SampleDataBuffer[activeSensors];
+
         //todo create a buffer for each sensor
         long now = System.currentTimeMillis();
 
         String generalHeader = getGeneralHeader(now, smartPhonePosition);
-       // Toast.makeText(getApplicationContext(), generalHeader, Toast.LENGTH_LONG).show();
+        // Toast.makeText(getApplicationContext(), generalHeader, Toast.LENGTH_LONG).show();
 
-        for(int i=0; i < selectedSensorsData.size(); i++) {
+        for (int i = 0; i < selectedSensorsData.size(); i++) {
             isFirstSample[i] = true;
             lastUpdateTimestamp[i] = 0;
             cont[i] = 0;
@@ -112,21 +118,19 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
             String sensorHeader = getSensorSpecificHeader(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i));
             String relationHeader = getRelationHeader(selectedSensorsData.get(i).getSensorType());
 
-            //creazione file e directories
+            //Creation of a directory and a file for each sensor
             String sensorName = SensorInfo.getSensorNameById(selectedSensorsData.get(i).getSensorType(), selectedSensorsData.get(i).getSensorName());
-            samplesDirectories[i] = Utilities.createDirectory("ActivityMonitoringTools/SensorDataLog/Samples/"+sensorName+
-                    "/"+Utilities.getDateTimeFromMillis(now, "yy-MM-dd"));
-            samplesFiles[i] = Utilities.createFile(samplesDirectories[i],Utilities.getDateTimeFromMillis(now, "kk-mm")+".arff");
+            samplesDirectories[i] = Utilities.createDirectory("ActivityMonitoringTools/SensorDataLog/Samples/" + sensorName +
+                    "/" + Utilities.getDateTimeFromMillis(now, "yy-MM-dd"));
+            samplesFiles[i] = Utilities.createFile(samplesDirectories[i], Utilities.getDateTimeFromMillis(now, "kk-mm") + ".arff");
 
-            //creazione di un buffer per ciascun sensore utilizzato
+            //Creation of a buffer for each sensor
+            numSamplesPerSec[i] = selectedSensorsData.get(i).getNumSamplesPerSec(selectedSensorsData.get(i).getSensorSpeed());
+            dimbuf[i] = 10 * numSamplesPerSec[i];//ten seconds of samples
+            samplesBuffer[i] = new SampleDataBuffer(dimbuf[i]);
 
-            int numSamplesPerSec = selectedSensorsData.get(i).getNumSamplesPerSec(selectedSensorsData.get(i).getSensorSpeed());
-            int dimBuf = 10 * numSamplesPerSec;//ten seconds of samples
 
-
-            //todo instantiate the buffer for the sensor with the proper dimension
-
-            if(Utilities.getFileSize(samplesFiles[i])==0) {
+            if (Utilities.getFileSize(samplesFiles[i]) == 0) {
 
                 Utilities.writeData(samplesFiles[i], sensorHeader);
                 Utilities.writeData(samplesFiles[i], generalHeader);
@@ -134,8 +138,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
             }
 
 
-            }
-
+        }
 
 
         registerListeners();
@@ -151,6 +154,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         unregisterReceiver(actionScreenOffReceiver);
 
         unregisterListener();
+        timer.cancel();
 
         mWakeLock.release();
 
@@ -160,7 +164,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
     public void registerListeners() {
 
-        for(SensorInfo s : selectedSensorsData) {
+        for (SensorInfo s : selectedSensorsData) {
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(s.getSensorType()), s.getSensorSpeed());
         }
 
@@ -171,36 +175,37 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         sensorManager.unregisterListener(this);
     }
 
-   @Override
+    @Override
     public void onSensorChanged(SensorEvent event) {
-       for(int i = 0; i < activeSensors; i++) {
-           if(event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
-               long timestampInMillis =  Utilities.getEventTimestampInMillis(event.timestamp);
+        for (int i = 0; i < activeSensors; i++) {
+            if (event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
+                long timestampInMillis = Utilities.getEventTimestampInMillis(event.timestamp);
 
 
-
-                if(isFirstSample[i]) {
+                if (isFirstSample[i]) {
                     lastUpdateTimestamp[i] = timestampInMillis;
                     isFirstSample[i] = false;
                 }
 
-               long diff = timestampInMillis - lastUpdateTimestamp[i];
-               cont[i] += diff;
-               lastUpdateTimestamp[i] = timestampInMillis;
+                long diff = timestampInMillis - lastUpdateTimestamp[i];
+                cont[i] += diff;
+                lastUpdateTimestamp[i] = timestampInMillis;
 
-               String sensedValues = "";
+                String sensedValues = "";
 
-               for(int j = 0; j < event.values.length; j++) {
-                   sensedValues += ", "+event.values[j];
-               }
+                for (int j = 0; j < event.values.length; j++) {
+                    sensedValues += ", " + event.values[j];
+                }
 
-               //Utilities.writeData(samplesFiles[i], event.timestamp+" "+timestampInMillis+" "+Utilities.getTimeInSeconds(cont[i])+"\n");
-              Utilities.writeData(samplesFiles[i],Utilities.getTimeInSeconds(cont[i])+sensedValues+"\n");
+                SampleData sample = new SampleData(Utilities.getTimeInSeconds(cont[i]), event.values);
+                //Utilities.writeData(samplesFiles[i],sample.toString() );//writing the single sample to the file
+                //Log.e(""+timestampInMillis,sample.toString() );
 
+                samplesBuffer[i].putSample(sample);
 
-           }
+            }
 
-       }
+        }
 
     }
 
@@ -210,7 +215,6 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     }
 
 
-
     public String getSensorSpecificHeader(int sensorId, SensorInfo sensorInfo) {
 
         String sensorName = SensorInfo.getSensorNameById(sensorId, sensorInfo.getSensorName());
@@ -218,9 +222,9 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         String sensorSpeed = sensorInfo.getAndroidSamplingRateById(sensorInfo.getSensorSpeed());
 
 
-        String sensorHeader = "% "+sensorName+" Track\n%\n"+
-                              "% Range: "+sensorRange+" "+SensorInfo.getSensorUnitById(sensorInfo.getSensorType())+"\n"+
-                              "% Android Sampling Rate : "+sensorSpeed+"\n";
+        String sensorHeader = "% " + sensorName + " Track\n%\n" +
+                "% Range: " + sensorRange + " " + SensorInfo.getSensorUnitById(sensorInfo.getSensorType()) + "\n" +
+                "% Android Sampling Rate : " + sensorSpeed + "\n";
         return sensorHeader;
     }
 
@@ -238,13 +242,13 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         String userHeight = userInfo.get(UserInformationManager.USER_HEIGHT);
         String userWeight = userInfo.get(UserInformationManager.USER_WEIGHT);
 
-        String generalHeader = "% Start Date [YY-MM-DD]: "+startDate+"\n"+
-                               "% Start Time [hh-mm-ss]: "+startTime+"\n"+
-                               "% \n"+
-                               "% Device: "+device+"\n"+
-                               "% Android Version : "+androidVersion+"\n"+
-                               "% User (sex, age, height [cm], weight [kg]): "+userSex+", "+userAge+", "+userHeight+", "+userWeight+"\n"+
-                               "% Smartphone Position: "+smartphonePosition+"\n";
+        String generalHeader = "% Start Date [YY-MM-DD]: " + startDate + "\n" +
+                "% Start Time [hh-mm-ss]: " + startTime + "\n" +
+                "% \n" +
+                "% Device: " + device + "\n" +
+                "% Android Version : " + androidVersion + "\n" +
+                "% User (sex, age, height [cm], weight [kg]): " + userSex + ", " + userAge + ", " + userHeight + ", " + userWeight + "\n" +
+                "% Smartphone Position: " + smartphonePosition + "\n";
 
         return generalHeader;
     }
@@ -408,7 +412,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
     class SavingSamplesTimer extends CountDownTimer {
 
-         /**
+        /**
          * @param millisInFuture    The number of millis in the future from the call
          *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
          *                          is called.
@@ -429,9 +433,43 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         public void onFinish() {
             Log.e("Time's up", "time's up");
 
+            for (int i = 0; i < activeSensors; i++) {
+                new SavingSamplesTask(i, samplesBuffer[i], samplesFiles[i]).execute();
+            }
 
             this.start();
 
+        }
+    }
+
+    class SavingSamplesTask extends AsyncTask<String, String, String> {
+
+        int id;
+        SampleDataBuffer buffer;
+        File outFile;
+
+        public SavingSamplesTask(int id, SampleDataBuffer buf, File file) {
+            this.id = id;
+            this.buffer = buf;
+            this.outFile = file;
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            SampleData[] samples = buffer.getNSamples(buffer.getDimBuffer()/2);
+           // Utilities.writeData(outFile,"-----------\n");
+            for (SampleData s : samples) {
+                Utilities.writeData(outFile, s.toString());
+            }
+
+           /* SampleData s = buffer.getSample();//prendo dal buffer un campione alla volta e lo scrivo su file, ci vuole un timer che scatta ogni ms
+            Utilities.writeData(outFile,s.toString());*/
+
+
+            return null;
         }
     }
 

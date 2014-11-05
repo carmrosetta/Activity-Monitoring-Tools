@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class ToolsActivity extends Activity {
 
+    
     public static boolean toolsRunning = false;
 
     public final static int SELECT_SENSORS = 1;
