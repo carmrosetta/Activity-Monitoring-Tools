@@ -77,7 +77,7 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         Log.e("Sensor data log service started", "service started");
 
 
-        timer = new SavingSamplesTimer(5000, 1000);//five seconds
+       timer = new SavingSamplesTimer(5000, 1000);//five seconds
 
         if (!timerStarted) {
             timer.start();
@@ -126,8 +126,8 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
             //Creation of a buffer for each sensor
             numSamplesPerSec[i] = selectedSensorsData.get(i).getNumSamplesPerSec(selectedSensorsData.get(i).getSensorSpeed());
-            dimbuf[i] = 10 * numSamplesPerSec[i];//ten seconds of samples
-            samplesBuffer[i] = new SampleDataBuffer(dimbuf[i]);
+            //dimbuf[i] = 10 * numSamplesPerSec[i];//ten seconds of samples
+            samplesBuffer[i] = new SampleDataBuffer(1000);//fixed length buffer
 
 
             if (Utilities.getFileSize(samplesFiles[i]) == 0) {
@@ -179,7 +179,12 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
     public void onSensorChanged(SensorEvent event) {
         for (int i = 0; i < activeSensors; i++) {
             if (event.sensor.getType() == selectedSensorsData.get(i).getSensorType()) {//to select the right file/buffer ect
-                long timestampInMillis = Utilities.getEventTimestampInMillis(event.timestamp);
+
+                long timestamp = event.timestamp;
+                float[] values = event.values;
+
+                long timestampInMillis = Utilities.getEventTimestampInMillis(timestamp);
+
 
 
                 if (isFirstSample[i]) {
@@ -191,13 +196,13 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
                 cont[i] += diff;
                 lastUpdateTimestamp[i] = timestampInMillis;
 
-                String sensedValues = "";
+               /* String sensedValues = "";
 
                 for (int j = 0; j < event.values.length; j++) {
                     sensedValues += ", " + event.values[j];
-                }
+                }*/
 
-                SampleData sample = new SampleData(Utilities.getTimeInSeconds(cont[i]), event.values);
+                SampleData sample = new SampleData(Utilities.getTimeInSeconds(cont[i]), values);
                 //Utilities.writeData(samplesFiles[i],sample.toString() );//writing the single sample to the file
                 //Log.e(""+timestampInMillis,sample.toString() );
 
@@ -458,14 +463,37 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
         @Override
         protected String doInBackground(String... params) {
 
+            int head = buffer.getHead();
+            int tail = buffer.getTail();
 
-            SampleData[] samples = buffer.getNSamples(buffer.getDimBuffer()/2);
-           // Utilities.writeData(outFile,"-----------\n");
-            for (SampleData s : samples) {
-                Utilities.writeData(outFile, s.toString());
+            String data = "";
+
+
+
+            // Log.e("head ", ""+head);
+            // Log.e("tail ", ""+tail);
+
+
+
+            for(int i = head; i < tail; i++) {
+                SampleData s = buffer.getSample(i);
+                data=data+s.toString();
             }
 
-           /* SampleData s = buffer.getSample();//prendo dal buffer un campione alla volta e lo scrivo su file, ci vuole un timer che scatta ogni ms
+            Utilities.writeData(outFile,data );
+
+            buffer.setHead(tail);
+
+
+
+
+           /*SampleData[] samples = buffer.getNSamples(buffer.getDimBuffer()/2);
+
+            for (SampleData s : samples) {
+                Utilities.writeData(outFile, s.toString());
+            }*/
+
+           /*SampleData s = buffer.getSample();//prendo dal buffer un campione alla volta e lo scrivo su file, ci vuole un timer che scatta ogni ms
             Utilities.writeData(outFile,s.toString());*/
 
 

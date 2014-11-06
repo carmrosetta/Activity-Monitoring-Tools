@@ -13,20 +13,66 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SampleDataBuffer {
 
     private SampleData[] circularBuffer;
-    private int head = 0;
-    private int tail = 0;
-    private int counter = 0;
+    private int head;
+    private int tail;
+    //private int counter = 0;
 
-    private Lock lock = new ReentrantLock();
-    private Condition notFull = lock.newCondition();
-    private Condition notEmpty = lock.newCondition();
+//    private Lock lock = new ReentrantLock();
+//    private Condition notFull = lock.newCondition();
+//    private Condition notEmpty = lock.newCondition();
 
 
     public SampleDataBuffer(int numSamples) {
         this.circularBuffer = new SampleData[numSamples];
+        this.head = 0;
+        this.tail = 0;
     }
 
-    public void putSample(SampleData sample)  {
+    public boolean bufferFull() {
+        if(tail+1 == head) {
+            return true;
+        }
+
+        if(tail == (circularBuffer.length - 1) && head == 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int getDimBuffer() {
+        return circularBuffer.length;
+    }
+
+    public int getHead() {
+        return this.head;
+    }
+
+    public int getTail() {
+        return this.tail;
+    }
+
+    public void putSample(SampleData sample) {
+        if(!bufferFull()) {
+            circularBuffer[tail] = sample;
+            tail = (tail+1)%getDimBuffer();
+        }
+    }
+
+    public SampleData getSample(int index) {
+        SampleData sample = circularBuffer[index];
+
+        return sample;
+    }
+
+    public void setHead(int h) {
+        this.head = h;
+    }
+
+
+
+
+    /*public void putSample(SampleData sample)  {
         lock.lock();
         try {
             while (counter == circularBuffer.length)
@@ -42,10 +88,12 @@ public class SampleDataBuffer {
             lock.unlock();
         }
 
-    }
+    }*/
 
 
-    public SampleData getSample()  {
+
+
+    /*public SampleData getSample()  {
 
         SampleData sample = null;
 
@@ -89,11 +137,8 @@ public class SampleDataBuffer {
         }
 
         return samples;
-    }
+    }*/
 
-    public int getDimBuffer() {
-        return circularBuffer.length;
-    }
 
 
 
