@@ -468,11 +468,8 @@ public class SensorDataLogService extends SensorService implements SensorEventLi
 
             String data = "";
 
-
-
             // Log.e("head ", ""+head);
             // Log.e("tail ", ""+tail);
-
 
 
             for(int i = head; i < tail; i++) {
